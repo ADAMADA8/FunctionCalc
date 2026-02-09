@@ -1,0 +1,11 @@
+[package]
+name = "FunctionCalc"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+exmex = "0.20"
+
+[profile.release]
+lto = true
+codegen-units = 1
