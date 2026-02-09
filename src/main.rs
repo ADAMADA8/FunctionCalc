@@ -1,43 +1,27 @@
-use exmex::{parse, Express};
+use exmex::{parse, Express, FlatEx};
+use std::error::Error;
 use std::io::Write;
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn main() -> Result<(), Box<dyn Error>> {
     println!("Добро пожаловать!");
-    println!("Введите функцию f(x)");
-    println!("Пример: x + 10 * 4");
-    print!("f(x) = ");
-    std::io::stdout().flush()?;
-    let mut func = String::new();
-    std::io::stdin().read_line(&mut func).expect("Ошибка чтения функции!");
-    let func = func.trim();
-    let func = parse::<f64>(func).expect("Ошибка парсинга функции!");
+    let func = read_function()?;
 
-    println!("Введите параметры рекурсии (через пробел)");
-    println!("<чему равен первый x> <количество шагов> <размер шага>");
-    println!("Пример: 0 10 1");
-    print!("Параметры: ");
-    std::io::stdout().flush()?;
-    let mut params = String::new();
-    std::io::stdin().read_line(&mut params).expect("Ошибка чтения параметров!");
-
-    let params: Vec<usize> = params
-        .trim()
-        .split_whitespace()
-        .map(|s| s.parse().expect("Ошибка парсинга параметров!"))
-        .collect();
-
-    let [first_x, step_target, step_size] = params.try_into().unwrap();
+    let [first_x, step_target, step_size] = read_parameters()?.try_into().unwrap();
     let max_iter = step_target + first_x;
 
     let mut step_length = step_target.to_string().len() + 1;
     if step_length < 4 {
         step_length = 4;
     }
-    let x_length = (max_iter * step_size).to_string().len() + 1 ;
+    let x_length = (max_iter * step_size).to_string().len() + 1;
 
     println!(
         "Шаг{}| x{}| Результат",
-        if step_length > 3 {" ".repeat(step_length - 3)} else {" ".repeat(step_length)},
+        if step_length > 3 {
+            " ".repeat(step_length - 3)
+        } else {
+            " ".repeat(step_length)
+        },
         " ".repeat(x_length - 1)
     );
 
@@ -55,4 +39,37 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         );
     }
     Ok(())
+}
+
+fn read_function() -> Result<FlatEx<f64>, Box<dyn Error>> {
+    println!("Введите функцию f(x)");
+    println!("Пример: x + 10 * 4");
+    print!("f(x) = ");
+    std::io::stdout().flush()?;
+    let mut func = String::new();
+    std::io::stdin()
+        .read_line(&mut func)
+        .expect("Ошибка чтения функции!");
+    let func = func.trim();
+    let func = parse::<f64>(func).expect("Ошибка парсинга функции!");
+    Ok(func)
+}
+
+fn read_parameters() -> Result<(usize, usize, usize), Box<dyn Error>> {
+    println!("Введите параметры рекурсии (через пробел)");
+    println!("<чему равен первый x> <количество шагов> <размер шага>");
+    println!("Пример: 0 10 1");
+    print!("Параметры: ");
+    std::io::stdout().flush()?;
+    let mut params = String::new();
+    std::io::stdin()
+        .read_line(&mut params)
+        .expect("Ошибка чтения параметров!");
+
+    let params: Vec<usize> = params
+        .trim()
+        .split_whitespace()
+        .map(|s| s.parse().expect("Ошибка парсинга параметров!"))
+        .collect();
+    Ok((params[0], params[1], params[2]))
 }
