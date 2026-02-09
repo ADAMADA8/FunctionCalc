@@ -72,5 +72,18 @@ fn read_parameters() -> Result<(usize, usize, usize)> {
         .map(|s| s.parse())
         .collect::<Result<Vec<_>, _>>()
         .context("Ошибка парсинга параметров!")?;
+
+    if params.len() != 3 {
+        anyhow::bail!("Ожидалось 3 параметра, получено {}", params.len());
+    }
+
+    if params[1] == 0 {
+        anyhow::bail!("Количество шагов должно быть больше 0!");
+    }
+
+    if params[2] == 0 {
+        anyhow::bail!("Размер шага должен быть больше 0!");
+    }
+
     Ok((params[0], params[1], params[2]))
 }
