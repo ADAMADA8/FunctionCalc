@@ -2,6 +2,12 @@
 name = "FunctionCalc"
 version = "0.1.0"
 edition = "2024"
+license = "MIT"
+authors = ["ADAMADA8"]
+description = "CLI tool to evaluate f(x) over a range of steps"
+readme = "README.md"
+repository = "https://github.com/ADAMADA8/FunctionCalc"
+publish = false
 
 [dependencies]
 exmex = "0.20"
